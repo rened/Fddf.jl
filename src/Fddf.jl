@@ -4,13 +4,18 @@ using FunctionalData, DataFrames
 
 export fd, df
 
-import Base.fd
-fd(a::DataFrame) = @p Array a | transpose | mapvec x->@p map2 names(a) vec(x) Pair | Dict
+function Base.fd(a::DataFrame)
+    ks = @p names a
+    @p map (1:size(a,1)) (i->begin
+        @p map ks (k->Pair(k, a[i, k])) | Dict
+    end)
+end
 
-import DataFrames.df
 function df(a::Array)
     r = DataFrame()
-    @p fst a | ckeys | work x->r[x] = extract(a,x)
+    @p fst a | ckeys | work k->begin
+        setproperty!(r, k, extract(a,k))
+    end
     r
 end
 
