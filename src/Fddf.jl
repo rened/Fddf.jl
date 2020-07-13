@@ -11,9 +11,9 @@ end
 
 function df(a::Array)
     r = DataFrame()
-    allkeys = @p map a ckeys | FD.flatten | uniq
+    allkeys = @p mapvec a ckeys | FD.flatten | uniq
     @p work allkeys k->begin
-        setproperty!(r, k, extract(a,k))
+        setproperty!(r, k, extractvec(a,k))
     end
     r
 end
